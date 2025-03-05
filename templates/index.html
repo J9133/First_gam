@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+:root {
+  --bg-color: #171427;
+  --bird-color: yellow;
+  --obstacle-color: #f8f8f8;
+}
+
+#game {
+  background: var(--bg-color);
+  width: 390px;
+  height: 500px;
+  border: 1px solid black;
+  position: relative;
+  overflow: hidden;
+  margin-left: 5px
+}
+
+#obstacle {
+  width: 50px;
+  height: 500px;
+  background-color: var(--obstacle-color);
+  position: absolute;
+  top: 0;
+  left: 80%;
+  animation: obstacle-anim 2s infinite linear;
+  z-index: 1
+}
+
+#hold {
+  width: 50px;
+  height: 150px;
+  background-color: var(--bg-color);
+  position: absolute;
+  top: 150px;
+  left: 80%;
+  animation: obstacle-anim 2s infinite linear;
+  z-index: 2;
+}
+
+@keyframes obstacle-anim{
+  0%{left: 100%;}
+  100%{left: -60px;}
+}
+
+#bird {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 100px;
+  border-radius: 50%;
+  background-color: var(--bird-color);
+  z-index: 3;
+}
+  </style>
+</head>
+
+<body>
+  
+  <div id="game">
+    
+    <div id="obstacle"></div>
+    <div id="hold"></div>
+    <div id="bird"></div>
+  </div>
+  <script>
+  const obstacle = document.getElementById("obstacle");
+const hold = document.getElementById("hold");
+const bird = document.getElementById("bird");
+
+let score = 0;
+
+hold.addEventListener("animationiteration", () => {
+  let rand = Math.random() * (500 - 100);
+  hold.style.top = rand + "px";
+  score++;
+})
+
+setInterval(function(){
+  let birdtop = parseInt(getComputedStyle(bird).getPropertyValue("top"));
+  if (!isjumping){
+    bird.style.top = birdtop + 3 + "px";
+  }
+  let obstacleLeft = parseInt(getComputedStyle(obstacle).getPropertyValue("left"));
+  let holdtop = parseInt(getComputedStyle(hold).getPropertyValue("top"));
+  if (birdtop > 490 || (obstacleLeft < 20 && (birdtop > holdtop + 150 || birdtop < holdtop))){
+    alert(`Game Over. Yor Score : ${score}`);
+    bird.style.top = 100 + "px";
+    obstacle.style.left = "100%";
+    hold.style.left = "100%";
+    
+    score = 0;
+  }
+}, 10)
+
+// Jumping
+let isjumping = false;
+document.addEventListener("click", () => {
+  isJumping = true;
+  let jumpTimer = 0;
+
+  let jumpInterval = setInterval(function() {
+    jumpTimer++;
+    let birdTop = parseInt(getComputedStyle(bird).getPropertyValue("top"));
+    if (birdTop > 0 && jumpTimer < 15) {
+      bird.style.top = birdTop - 5 + "px";
+    }
+
+    if (jumpTimer > 15) {
+      clearInterval(jumpInterval);
+      isJumping = false;
+      jumpTimer = 0;
+    }
+  }, 10);
+});
+</script>
+</body>
+
+                     </html>
